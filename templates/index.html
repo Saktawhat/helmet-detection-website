@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helmet Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+<div class="layout">
+    <nav class="nav-menu">
+        <div class="logo">
+            <h1>Helmet Detector</h1>
+            <p>Project by 3TuaBath</p>
+        </div>
+        <a href="index.html" class="nav-item active">Dashboard</a>
+        <a href="contact.html" class="nav-item">Statistics</a>
+        <a href="aboutus.html" class="nav-item">Users</a>
+        <a href="#" class="nav-item">Settings</a>
+    </nav>
+    <main class="main">
+        <div class="headline">
+            <h1>Dashboard</h1>
+            <p>Overview</p>
+        </div>
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Detections Today</h3>
+                <p class="number" id="totalDetections">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Helmet Compliance Rate</h3>
+                <p class="number" id="complianceRate">0%</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Cameras</h3>
+                <p class="number">1/1</p>
+            </div>
+            <div class="stat-card">
+                <h3>Safety Score</h3>
+                <p class="number" id="safetyScore">0/10</p>
+            </div>
+        </div>
+        <div class="violations-card">
+            <h2>Recent Violations</h2>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Detection Results</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+async function loadData() {
+    try {
+        const res = await fetch("/violations");
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("Fetched data:", data); // Debug log
+        
+        const tbody = document.querySelector("#dataTable tbody");
+        tbody.innerHTML = "";
+        
+        if (data.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='3'>No violations found</td></tr>";
+            return;
+        }
+        
+        data.forEach(item => {
+            const tr = document.createElement("tr");
+            const timestamp = new Date(item.timestamp).toLocaleString();
+            
+            // Format detection results
+            let resultText = "No detections";
+            let confidence = "N/A";
+            
+            if (item.result && item.result.length > 0) {
+                resultText = item.result.map(r => r.label).join(", ");
+                confidence = item.result.map(r => `${(r.conf * 100).toFixed(1)}%`).join(", ");
+            }
+            
+            tr.innerHTML = `
+                <td>${timestamp}</td>
+                <td>${resultText}</td>
+                <td>${confidence}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        // Update stats
+        updateStats(data);
+        
+    } catch (error) {
+        console.error("Error loading data:", error);
+        const tbody = document.querySelector("#dataTable tbody");
+        tbody.innerHTML = `<tr><td colspan='3'>Error loading data: ${error.message}</td></tr>`;
+    }
+}
+
+function updateStats(data) {
+    // Update total detections
+    document.getElementById('totalDetections').textContent = data.length;
+    
+    // Calculate helmet compliance (example logic)
+    let helmetCount = 0;
+    let totalDetections = 0;
+    
+    data.forEach(item => {
+        if (item.result) {
+            item.result.forEach(detection => {
+                totalDetections++;
+                if (detection.label.toLowerCase().includes('helmet')) {
+                    helmetCount++;
+                }
+            });
+        }
+    });
+    
+    const complianceRate = totalDetections > 0 ? ((helmetCount / totalDetections) * 100).toFixed(1) : 0;
+    document.getElementById('complianceRate').textContent = complianceRate + '%';
+    
+    // Safety score based on compliance
+    const safetyScore = (complianceRate / 10).toFixed(1);
+    document.getElementById('safetyScore').textContent = safetyScore + '/10';
+}
+
+// Load data when page opens
+loadData();
+
+// Update every 5 seconds
+setInterval(loadData, 5000);
+</script>
+</body>
+</html>
