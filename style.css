@@ -1,0 +1,187 @@
+        @import url("https://fonts.googleapis.com/css2?family=Mozilla+Headline:wght@200..700&family=Mozilla+Text:wght@200..700&display=swap");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Mozilla Text", sans-serif;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .nav-menu {
+            width: 250px;
+            height: 100vh;
+            border-right: 1px solid #e5e7eb;
+            background-color: white;
+            padding: 20px 0;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+            padding-left: 20px;
+            font-family: "Mozilla Headline", sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .logo h1 {
+            font-size: 40px;
+        }
+
+        .logo p {
+            font-size: 16px;
+            color: #8b8b8b;
+        }
+        .nav-item {
+            display: block;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: #6b7280;
+            margin-bottom: 5px;
+            margin-right: 10px;
+            border-radius: 0 25px 25px 0;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background-color: #f3f4f6;
+            color: #2c3e50;
+        }
+
+        .nav-item.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            padding: 40px;
+            background: #f9fafb;
+        }
+
+        .headline {
+            margin-bottom: 40px;
+        }
+
+        .headline h1 {
+            font-family: "Mozilla Headline", sans-serif;
+            font-size: 32px;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .headline p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* FIXED: Single row layout */
+        .stats-container {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            flex: 1; /* Equal width cards */
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card h3 {
+            color: #7f8c8d;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main {
+                padding: 30px;
+            }
+            
+            .stat-card .number {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout {
+                flex-direction: column;
+            }
+            
+            .nav-menu {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            
+            .main {
+                padding: 20px;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+.violations-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    margin-top: 20px;
+}
+
+.violations-card h2 {
+    font-family: "Mozilla Headline", sans-serif;
+    font-size: 20px;
+    color: #1f2937;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 8px;
+}
+
+.violation-item {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background: #f9fafb;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.violation-item:hover {
+    background: #f3f4f6;
+}
+
+.violation-item p {
+    margin: 4px 0;
+    color: #374151;
+    font-size: 14px;
+}

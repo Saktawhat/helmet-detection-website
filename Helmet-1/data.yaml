@@ -1,0 +1,13 @@
+names:
+- Helmet
+- No_helmet
+nc: 2
+roboflow:
+  license: CC BY 4.0
+  project: helmet-phxmb-cslyl
+  url: https://universe.roboflow.com/is-0azec/helmet-phxmb-cslyl/dataset/1
+  version: 1
+  workspace: is-0azec
+test: ../test/images
+train: Helmet-1/train/images
+val: Helmet-1/valid/images
