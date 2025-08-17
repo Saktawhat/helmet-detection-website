@@ -1,2 +1,4 @@
 # helmet-detection-website
-wip
+wip. still in progress please wait :3
+
+
