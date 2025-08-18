@@ -71,6 +71,7 @@ def webcam_loop():
         return
 
     while True:
+        time.sleep(2.5)
         ret, frame = cap.read()
         if not ret:
             continue
