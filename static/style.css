@@ -22,41 +22,51 @@ body {
 
 /* Navigation menu */
 .nav-menu {
-    width: 260px;
-    background: white;
-    color: rgb(0, 0, 0);
+    width: 240px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
     padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    position: fixed;
     height: 100vh;
-    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    position: fixed;
+    font-family: "Mozilla Headline", sans-serif;
 }
 
 .logo {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     text-align: left;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .logo h1 {
     font-size: 45px;
     font-weight: bold;
-    margin-bottom: 5px;
 }
 
 .logo p {
     font-size: 14px;
-    color: #495057;
+    color: #ffffff;
+}
+
+.logo p:hover {
+    color: rgb(12, 111, 232);
+    transform: translateX(5px);
+    /* background: linear-gradient(90deg, #0061ff, #60efff); */
 }
 
 .nav-menu a {
-    color: black;
-    font-size: 20px;
+    display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  color: #ffffff;
+  transition: 0.2s;
 }
 
 .nav-item {
     display: block;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgb(255, 255, 255);
     text-decoration: none;
     padding: 15px 20px;
     margin: 5px 0;
@@ -66,14 +76,17 @@ body {
 }
 
 .nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: rgb(255, 255, 255);
     transform: translateX(5px);
 }
 
 .nav-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.nav-item.active:hover {
+    color: rgb(255, 255, 255);
+    transform: translateX(5px);
 }
 
 /* Main content area */

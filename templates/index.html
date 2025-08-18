@@ -17,7 +17,7 @@
         </div>
         <a href="index.html" class="nav-item active">Dashboard</a>
         <a href="contact.html" class="nav-item">Statistics</a>
-        <a href="aboutus.html" class="nav-item">Users</a>
+        <!-- <a href="aboutus.html" class="nav-item">Users</a> -->
         <a href="#" class="nav-item">Settings</a>
     </nav>
     <main class="main">
@@ -85,14 +85,14 @@ async function loadData() {
             const tr = document.createElement("tr");
             const timestamp = new Date(item.timestamp).toLocaleString();
             
+            
             // Format detection results
             let resultText = "No detections";
             let confidence = "N/A";
             
             if (item.result && item.result.length > 0) {
                 resultText = item.result.map(r => r.label).join(", ");
-                confidence = item.result.map(r => `${(r.conf * 100).toFixed(1)}%`).join(", ");
-            }
+                confidence = item.result.map(r => `${(r.conf * 100).toFixed(1)}%`).join(", ")};
             
             tr.innerHTML = `
                 <td>${timestamp}</td>
