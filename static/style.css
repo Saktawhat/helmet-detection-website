@@ -35,11 +35,12 @@ body {
 .logo {
     margin-bottom: 10px;
     text-align: left;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
+    line-height: 1.1;        /* reduce vertical spacing */
 }
 
 .logo h1 {
-    font-size: 45px;
+    font-size: 47px;
     font-weight: bold;
 }
 

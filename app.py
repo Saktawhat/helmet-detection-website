@@ -18,8 +18,7 @@ MODEL_PATH = "best.pt"  # YOLOv5 model ตรวจหมวกอย่าง�
 API_KEY = ""  # Optional security key
 app = Flask(__name__)
 
-MONGO_URI = "mongodb://localhost:27017/?appName=MongoDB+Compass&directConnection=true&serverSelectionTimeoutMS=2000"
-  # ถ้าใช้ MongoDB Atlas ต้องใส่ URI ของ Atlas
+MONGO_URI = "mongodb://182.52.170.115:27017"
 DB_NAME = "riderdata"
 COLLECTION_NAME = "violations"
 
@@ -69,46 +68,56 @@ def webcam_loop():
     if not cap.isOpened():
         print("Cannot open webcam")
         return
-
-    while True:
-        time.sleep(2.5)
+    
+    print("🎥 Starting webcam... Press 'q' to quit")
+    
+    # State tracking
+    helmet_detected_last_frame = False
+    
+    while True:  
         ret, frame = cap.read()
         if not ret:
-            continue
-
+            print("Failed to grab frame")
+            break
+       
         helmets = detect_helmet(frame)
+        helmet_detected_this_frame = helmets is not None and len(helmets) > 0
         
-        if helmets:
+        # Only save if helmet is detected THIS frame but NOT in the previous frame
+        if helmet_detected_this_frame and not helmet_detected_last_frame:
             record = {
-                "_id" : ObjectId(),
-                "timestamp" : datetime.now(timezone.utc),
-                "result" : helmets
+                "_id": ObjectId(),
+                "timestamp": datetime.now(timezone.utc),
+                "result": helmets
             }
-            
             try:
                 collection.insert_one(record)
-                last_save_time = time.time()
-                print(f"✅ Inserted record at {record['timestamp']} with {len(helmets)} helmets")
+                print(f"✅ NEW HELMET DETECTED! Saved record at {record['timestamp']} with {len(record['result'])} detections")
             except Exception as e:
                 print(f"❌ Insert failed: {e}")
-
-        # แสดงผลบน frame
-        for h in helmets:
-            label = f"{h['label']} {h['conf']:.2f}"
-            cv2.putText(frame, label, (10, 30 + 30*helmets.index(h)),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
-
+        elif helmet_detected_this_frame and helmet_detected_last_frame:
+            print("🔄 Helmet still present (not saving)")
+        elif not helmet_detected_this_frame and helmet_detected_last_frame:
+            print("👋 Helmet disappeared - ready to detect new helmet")
+        
         cv2.imshow('Helmet Detection', frame)
-
-        # เก็บผล detection ล่าสุด
+        
+        helmet_detected_last_frame = helmet_detected_this_frame
+        
         with lock:
             latest_results = helmets
-
+        
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+    
+    # Clean up
     cap.release()
     cv2.destroyAllWindows()
+    print("🛑 Webcam stopped")
+        
+    cap.release()
+    cv2.destroyAllWindows()
+
 
 # --------------------
 # Flask API Endpoint
