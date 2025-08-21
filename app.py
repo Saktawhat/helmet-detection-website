@@ -69,7 +69,9 @@ def webcam_loop():
         print("Cannot open webcam")
         return
     
-    print("🎥 Starting webcam... Press 'q' to quit")
+    count = 0
+    if time:
+        print("🎥 Starting webcam... Press 'q' to quit")
     
     # State tracking
     helmet_detected_last_frame = False
@@ -92,7 +94,7 @@ def webcam_loop():
             }
             try:
                 collection.insert_one(record)
-                print(f"✅ NEW HELMET DETECTED! Saved record at {record['timestamp']} with {len(record['result'])} detections")
+                print(f"✅ Saved record at {record['timestamp']} with {len(record['result'])} detections")
             except Exception as e:
                 print(f"❌ Insert failed: {e}")
         elif helmet_detected_this_frame and helmet_detected_last_frame:
@@ -135,13 +137,12 @@ def get_violations():
         data = list(collection.find().sort("timestamp", -1).limit(10))
         # Convert ObjectId and datetime for JSON serialization
         for d in data:
-            d["_id"] = str(d["_id"])
+            d["_id"] = str(d["_id"])    
             d["timestamp"] = d["timestamp"].isoformat()
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Keep your original helmets endpoint
 @app.route('/helmets', methods=['GET'])
 def get_results():
     try:
@@ -156,9 +157,8 @@ def get_results():
 # Run server + webcam thread
 # --------------------
 if __name__ == '__main__':
-    # เริ่ม webcam ใน thread แยก
     t = threading.Thread(target=webcam_loop, daemon=True)
     t.start()
-
+    
     # รัน Flask server
     app.run(host='0.0.0.0', port=5000)

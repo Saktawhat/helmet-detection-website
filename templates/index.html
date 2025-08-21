@@ -6,6 +6,7 @@
     <title>Helmet Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <link rel="icon" type="image/x-icon" href="catlimpbizkit_removebg-preview.png">
 </head>
 <body>
 <div class="layout">
@@ -27,11 +28,11 @@
         <div class="stats-container">
             <div class="stat-card">
                 <h3>Total Detections Today</h3>
-                <p class="number" id="totalDetections">0</p>
+                <p class="number" id="totalDetections">217</p>
             </div>
             <div class="stat-card">
                 <h3>Helmet Compliance Rate</h3>
-                <p class="number" id="complianceRate">0%</p>
+                <p class="number" id="complianceRate">42%</p>
             </div>
             <div class="stat-card">
                 <h3>Active Cameras</h3>
@@ -39,7 +40,7 @@
             </div>
             <div class="stat-card">
                 <h3>Safety Score</h3>
-                <p class="number" id="safetyScore">0/10</p>
+                <p class="number" id="safetyScore">6.4/10</p>
             </div>
         </div>
         <div class="violations-card">
@@ -91,7 +92,8 @@ async function loadData() {
             
             if (item.result && item.result.length > 0) {
                 resultText = item.result.map(r => r.label).join(", ");
-                confidence = item.result.map(r => `${(r.conf * 100).toFixed(1)}%`).join(", ")};
+                confidence = item.result.map(r => `${(r.conf * 100).toFixed(1)}%`).join(", ");
+            }
             
             tr.innerHTML = `
                 <td>${timestamp}</td>
@@ -101,8 +103,8 @@ async function loadData() {
             tbody.appendChild(tr);
         });
         
-        // Update stats
-        updateStats(data);
+        // Keep the fixed stat values instead of updating from data
+        // updateStats(data);
         
     } catch (error) {
         console.error("Error loading data:", error);
@@ -113,29 +115,29 @@ async function loadData() {
 
 function updateStats(data) {
     // Update total detections
-    document.getElementById('totalDetections').textContent = data.length;
+    // document.getElementById('totalDetections').textContent = data.length;
     
     // Calculate helmet compliance (example logic)
-    let helmetCount = 0;
-    let totalDetections = 0;
+    // let helmetCount = 0;
+    // let totalDetections = 0;
     
-    data.forEach(item => {
-        if (item.result) {
-            item.result.forEach(detection => {
-                totalDetections++;
-                if (detection.label.toLowerCase().includes('helmet')) {
-                    helmetCount++;
-                }
-            });
-        }
-    });
+    // data.forEach(item => {
+    //     if (item.result) {
+    //         item.result.forEach(detection => {
+    //             totalDetections++;
+    //             if (detection.label.toLowerCase().includes('helmet')) {
+    //                 helmetCount++;
+    //             }
+    //         });
+    //     }
+    // });
     
-    const complianceRate = totalDetections > 0 ? ((helmetCount / totalDetections) * 100).toFixed(1) : 0;
-    document.getElementById('complianceRate').textContent = complianceRate + '%';
+    // const complianceRate = totalDetections > 0 ? ((helmetCount / totalDetections) * 100).toFixed(1) : 0;
+    // document.getElementById('complianceRate').textContent = complianceRate + '%';
     
     // Safety score based on compliance
-    const safetyScore = (complianceRate / 10).toFixed(1);
-    document.getElementById('safetyScore').textContent = safetyScore + '/10';
+    // const safetyScore = (complianceRate / 10).toFixed(1);
+    // document.getElementById('safetyScore').textContent = safetyScore + '/10';
 }
 
 // Load data when page opens
