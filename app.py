@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import cv2
 import torch
 from flask import Flask, jsonify, render_template
@@ -7,16 +8,15 @@ import pathlib
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import time
-from flask_cors import CORS 
-temp = pathlib.PosixPath   
-pathlib.PosixPath = pathlib.WindowsPath
+from flask_cors import CORS
+from ultralytics import YOLO
 
 # --------------------
 # Config
 # --------------------
-MODEL_PATH = "best.pt"  # YOLOv5 model ตรวจหมวกอย่างเดียว
-API_KEY = ""  # Optional security key
+API_KEY = ""  
 app = Flask(__name__)
+CORS(app)
 
 MONGO_URI = "mongodb://182.52.170.115:27017"
 DB_NAME = "riderdata"
@@ -26,14 +26,9 @@ client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
-# --------------------
-# Load YOLOv5 model
-# --------------------
-helmet_model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, force_reload=True)
+helmet_model = torch.hub.load('ultralytics/yolov5', 'custom', path="best.pt", force_reload=True) 
 
-# --------------------
-# Shared results
-# --------------------
+
 latest_results = []  # เก็บผล detection ล่าสุด
 lock = threading.Lock()  # สำหรับ thread-safe
 
@@ -71,7 +66,7 @@ def webcam_loop():
     
     count = 0
     if time:
-        print("🎥 Starting webcam... Press 'q' to quit")
+        print("🎥 Starting webcam")
     
     # State tracking
     helmet_detected_last_frame = False
@@ -124,8 +119,6 @@ def webcam_loop():
 # --------------------
 # Flask API Endpoint
 # --------------------
-@app.route('/helmets', methods=['GET'])
-# Main dashboard route
 @app.route('/')
 def dashboard():
     return render_template('index.html')
