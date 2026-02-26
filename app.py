@@ -1,6 +1,6 @@
 import cv2
 import torch
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, Response
 from datetime import datetime, timezone
 import threading
 from pymongo import MongoClient
@@ -16,7 +16,7 @@ os.environ['QT_QPA_PLATFORM'] = 'xcb'
 ocr = easyocr.Reader(['th'], gpu=True)
 
 # --------------------
-# Config 
+# Config
 # --------------------
 API_KEY = ""  
 app = Flask(__name__)
@@ -24,10 +24,10 @@ CORS(app)
 
 MONGO_URI = "mongodb://localhost:27017/?appName=MongoDB+Compass&directConnection=true&serverSelectionTimeoutMS=2000"
 DB_NAME = "riderdata"
-COLLECTION_NAME = "violations"
+COLLECTION_NAME = "detections"
 
 # Create directory for saving violation images
-VIOLATION_IMAGE_DIR = "violation_images"
+VIOLATION_IMAGE_DIR = "violation_images";
 os.makedirs(VIOLATION_IMAGE_DIR, exist_ok=True)
 
 client = MongoClient(MONGO_URI)
@@ -36,7 +36,7 @@ collection = db[COLLECTION_NAME]
 
 # โหลด YOLOv5 custom model
 helmet_model = torch.hub.load('ultralytics/yolov5', 'custom', path="best.pt") 
-plate_model = torch.hub.load('ultralytics/yolov5', 'custom', path="bestplatenigga.pt")
+plate_model = torch.hub.load('ultralytics/yolov5', 'custom', path="best.pt") 
 ALLOWED_PLATE_CLASSES = ['license-plate', 'motorcycle']
 
 latest_results = []  # เก็บผล detection ล่าสุด
@@ -53,7 +53,7 @@ def preprocess_plate_image(img):
     # แปลงเป็น grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-    # ลด noise
+    # ลด noise2pz
     denoised = cv2.bilateralFilter(gray, 9, 75, 75)
     
     # เพิ่ม contrast ด้วย CLAHE
@@ -250,7 +250,7 @@ def detect_helmet(img):
 def webcam_loop():
     global latest_results
     url = "http://100.66.178.110:5000/video_feed"
-    cap = cv2.VideoCapture(url)
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         print("Cannot open webcam")
         return
@@ -368,6 +368,13 @@ def get_results():
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/livestream')
+def livestream():
+    # add route to show live stream and fix styling issues
+    
+    return render_template('livestream.html')
+
 
 # --------------------
 # Run server + webcam thread python app.py
