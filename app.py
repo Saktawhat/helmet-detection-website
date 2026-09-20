@@ -25,6 +25,7 @@ CORS(app)
 MONGO_URI = "mongodb://localhost:27017/?appName=MongoDB+Compass&directConnection=true&serverSelectionTimeoutMS=2000"
 DB_NAME = "riderdata"
 COLLECTION_NAME = "detections"
+SHOW_OPENCV_WINDOW = os.getenv("SHOW_OPENCV_WINDOW", "0") == "1"
 
 # Create directory for saving violation images
 VIOLATION_IMAGE_DIR = "violation_images";
@@ -249,6 +250,7 @@ def detect_helmet(img):
 # --------------------
 def webcam_loop():
     global latest_results
+    show_window = SHOW_OPENCV_WINDOW
     url = "http://100.66.178.110:5000/video_feed"
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -334,8 +336,13 @@ def webcam_loop():
                     print("👋 No-helmet violation ended - ready to detect new violation")
                     violation_saved = False  # รีเซ็ตสำหรับการตรวจจับครั้งถัดไป
                 
-                # แสดงภาพ
-        cv2.imshow('Helmet Detection', frame_with_boxes)
+                # แสดงภาพ when GUI support is available.
+        if show_window:
+            try:
+                cv2.imshow('Helmet Detection', frame_with_boxes)
+            except cv2.error as e:
+                print(f"OpenCV window disabled: {e}")
+                show_window = False
                 
                 # อัพเดทสถานะเฟรมก่อนหน้า
         no_helmet_detected_last_frame = no_helmet_detected_this_frame
@@ -343,11 +350,12 @@ def webcam_loop():
         with lock:
                 latest_results = helmets
                 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if show_window and cv2.waitKey(1) & 0xFF == ord('q'):
                 break
     
     cap.release()
-    cv2.destroyAllWindows()
+    if show_window:
+        cv2.destroyAllWindows()
     print("🛑 Webcam stopped")
 
 # --------------------
